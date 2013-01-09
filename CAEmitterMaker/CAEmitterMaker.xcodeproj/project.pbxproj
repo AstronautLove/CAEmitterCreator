@@ -13,6 +13,8 @@
 		019F8F72169D39F0000FFD95 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F70169D39F0000FFD95 /* Credits.rtf */; };
 		019F8F75169D39F0000FFD95 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 019F8F74169D39F0000FFD95 /* AppDelegate.m */; };
 		019F8F78169D39F1000FFD95 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F76169D39F1000FFD95 /* MainMenu.xib */; };
+		019F8F91169D458B000FFD95 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 019F8F8F169D458B000FFD95 /* MasterViewController.m */; };
+		019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F90169D458B000FFD95 /* MasterViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +31,9 @@
 		019F8F73169D39F0000FFD95 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		019F8F74169D39F0000FFD95 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		019F8F77169D39F1000FFD95 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		019F8F8E169D458B000FFD95 /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MasterViewController.h; path = Classes/MasterViewController.h; sourceTree = "<group>"; };
+		019F8F8F169D458B000FFD95 /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MasterViewController.m; path = Classes/MasterViewController.m; sourceTree = "<group>"; };
+		019F8F90169D458B000FFD95 /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MasterViewController.xib; path = Classes/MasterViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +87,7 @@
 		019F8F67169D39F0000FFD95 /* CAEmitterMaker */ = {
 			isa = PBXGroup;
 			children = (
+				019F8F8C169D4574000FFD95 /* Classes */,
 				019F8F73169D39F0000FFD95 /* AppDelegate.h */,
 				019F8F74169D39F0000FFD95 /* AppDelegate.m */,
 				019F8F76169D39F1000FFD95 /* MainMenu.xib */,
@@ -100,6 +106,16 @@
 				019F8F70169D39F0000FFD95 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		019F8F8C169D4574000FFD95 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				019F8F8E169D458B000FFD95 /* MasterViewController.h */,
+				019F8F8F169D458B000FFD95 /* MasterViewController.m */,
+				019F8F90169D458B000FFD95 /* MasterViewController.xib */,
+			);
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,6 +172,7 @@
 				019F8F6C169D39F0000FFD95 /* InfoPlist.strings in Resources */,
 				019F8F72169D39F0000FFD95 /* Credits.rtf in Resources */,
 				019F8F78169D39F1000FFD95 /* MainMenu.xib in Resources */,
+				019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +185,7 @@
 			files = (
 				019F8F6E169D39F0000FFD95 /* main.m in Sources */,
 				019F8F75169D39F0000FFD95 /* AppDelegate.m in Sources */,
+				019F8F91169D458B000FFD95 /* MasterViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,6 +315,7 @@
 				019F8F7D169D39F1000FFD95 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
