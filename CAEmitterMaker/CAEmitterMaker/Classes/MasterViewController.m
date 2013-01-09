@@ -7,8 +7,12 @@
 //
 
 #import "MasterViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface MasterViewController ()
+
+@property (nonatomic, strong) IBOutlet NSView *emitterView;
+@property (nonatomic, strong) IBOutlet NSScrollView *settingsView;
 
 @end
 
@@ -16,12 +20,21 @@
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Initialization code here.
+    if( self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil] )
+    {
+        
     }
     
     return self;
+}
+
+- (void) loadView
+{
+    [super loadView];
+    
+    // Create the emitter layer and set our emitter view to use it
+    CAEmitterLayer *emitterLayer = [[CAEmitterLayer alloc] init];
+    self.emitterView.layer = emitterLayer;
 }
 
 @end
