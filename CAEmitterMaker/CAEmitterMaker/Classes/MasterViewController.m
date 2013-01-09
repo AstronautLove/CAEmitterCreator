@@ -63,11 +63,11 @@
 {
     int uiIndex = 0;
     
-    NSTextField *label = [self labelForIndex:uiIndex];
+    NSTextField *label = [MasterViewController labelForIndex:uiIndex];
 
 }
 
-- (NSTextField *) labelForIndex:(int) index
++ (NSTextField *) labelForIndex:(int) index
 {
     NSRect labelFrame = [self textViewRectForIndex:index];
     NSTextField *label = [[NSTextField alloc] initWithFrame:labelFrame];
@@ -76,13 +76,13 @@
     return label;
 }
 
-- (NSRect) textViewRectForIndex:(int) index
++ (NSRect) textViewRectForIndex:(int) index
 {
     int yPos = SCROLL_VIEW_HEIGHT - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index);
     return NSMakeRect(ELEMENT_START_X, yPos, ELEMENT_WIDTH, ELEMENT_HEIGHT);
 }
 
-- (NSRect) sliderRectForIndex:(int) index
++ (NSRect) sliderRectForIndex:(int) index
 {
     int yPos = SCROLL_VIEW_HEIGHT - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index) - ELEMENT_HEIGHT;
     return NSMakeRect(ELEMENT_START_X, yPos, ELEMENT_WIDTH, ELEMENT_HEIGHT);
