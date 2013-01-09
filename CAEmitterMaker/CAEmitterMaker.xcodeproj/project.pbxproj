@@ -15,6 +15,7 @@
 		019F8F78169D39F1000FFD95 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F76169D39F1000FFD95 /* MainMenu.xib */; };
 		019F8F91169D458B000FFD95 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 019F8F8F169D458B000FFD95 /* MasterViewController.m */; };
 		019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F90169D458B000FFD95 /* MasterViewController.xib */; };
+		019F8F95169D47C2000FFD95 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 019F8F93169D47AA000FFD95 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		019F8F8E169D458B000FFD95 /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MasterViewController.h; path = Classes/MasterViewController.h; sourceTree = "<group>"; };
 		019F8F8F169D458B000FFD95 /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MasterViewController.m; path = Classes/MasterViewController.m; sourceTree = "<group>"; };
 		019F8F90169D458B000FFD95 /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MasterViewController.xib; path = Classes/MasterViewController.xib; sourceTree = "<group>"; };
+		019F8F93169D47AA000FFD95 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				019F8F95169D47C2000FFD95 /* QuartzCore.framework in Frameworks */,
 				019F8F62169D39F0000FFD95 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,6 +71,7 @@
 		019F8F60169D39F0000FFD95 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				019F8F93169D47AA000FFD95 /* QuartzCore.framework */,
 				019F8F61169D39F0000FFD95 /* Cocoa.framework */,
 				019F8F63169D39F0000FFD95 /* Other Frameworks */,
 			);
