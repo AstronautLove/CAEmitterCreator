@@ -111,7 +111,7 @@
 												<string key="NSFrame">{{124, 546}, {104, 24}}</string>
 												<reference key="NSSuperview" ref="486501665"/>
 												<reference key="NSWindow"/>
-												<reference key="NSNextKeyView"/>
+												<reference key="NSNextKeyView" ref="624550688"/>
 												<string key="NSReuseIdentifierKey">_NS:9</string>
 												<bool key="NSEnabled">YES</bool>
 												<object class="NSTextFieldCell" key="NSCell" id="839414927">
@@ -223,19 +223,19 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">emitterView</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="654257739"/>
-					</object>
-					<int key="connectionID">36</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">settingsView</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="1046028874"/>
 					</object>
 					<int key="connectionID">37</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">emitterView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="654257739"/>
+					</object>
+					<int key="connectionID">223</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -734,7 +734,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">217</int>
+			<int key="maxID">223</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

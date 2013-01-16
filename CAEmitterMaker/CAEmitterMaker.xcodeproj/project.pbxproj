@@ -16,6 +16,7 @@
 		019F8F91169D458B000FFD95 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 019F8F8F169D458B000FFD95 /* MasterViewController.m */; };
 		019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F90169D458B000FFD95 /* MasterViewController.xib */; };
 		019F8F95169D47C2000FFD95 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 019F8F93169D47AA000FFD95 /* QuartzCore.framework */; };
+		01A6060A16A6A006000AE4E8 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 01A6060916A6A006000AE4E8 /* spark.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		019F8F8F169D458B000FFD95 /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MasterViewController.m; path = Classes/MasterViewController.m; sourceTree = "<group>"; };
 		019F8F90169D458B000FFD95 /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MasterViewController.xib; path = Classes/MasterViewController.xib; sourceTree = "<group>"; };
 		019F8F93169D47AA000FFD95 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		01A6060916A6A006000AE4E8 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 		019F8F67169D39F0000FFD95 /* CAEmitterMaker */ = {
 			isa = PBXGroup;
 			children = (
+				01A6060116A53011000AE4E8 /* Resources */,
 				019F8F8C169D4574000FFD95 /* Classes */,
 				019F8F73169D39F0000FFD95 /* AppDelegate.h */,
 				019F8F74169D39F0000FFD95 /* AppDelegate.m */,
@@ -120,6 +123,14 @@
 				019F8F90169D458B000FFD95 /* MasterViewController.xib */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		01A6060116A53011000AE4E8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				01A6060916A6A006000AE4E8 /* spark.png */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,6 +188,7 @@
 				019F8F72169D39F0000FFD95 /* Credits.rtf in Resources */,
 				019F8F78169D39F1000FFD95 /* MainMenu.xib in Resources */,
 				019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */,
+				01A6060A16A6A006000AE4E8 /* spark.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
