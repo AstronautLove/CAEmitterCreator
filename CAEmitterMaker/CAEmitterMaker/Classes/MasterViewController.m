@@ -8,6 +8,7 @@
 
 #import "MasterViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "NSControl+EmitterProperty.h"
 
 #define UI_ELEMENT_START_Y  79
 #define SLIDER_SIZE         NSMakeSize(212,21)
@@ -20,12 +21,6 @@
 #define TOTAL_UI_ELEMENTS   24
 
 #define SCROLL_VIEW_HEIGHT  ((ELEMENT_HEIGHT * 2) + BUFFER_Y) * TOTAL_UI_ELEMENTS
-
-@interface NSControl ()
-
-@property (nonatomic, copy) NSString *emitterPropertyToModify;
-
-@end
 
 @interface MasterViewController ()
 
@@ -109,6 +104,8 @@
 
 - (void) createUIElements
 {
+    NSArray *allUIElements = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIElements" ofType:@"plist"]];
+    NSLog(@"%@", allUIElements);
     int index = 0;
     
     NSTextField *lifetimeText = [MasterViewController labelForIndex:index withText:@"Lifetime"];
