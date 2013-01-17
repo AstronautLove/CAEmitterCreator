@@ -21,6 +21,12 @@
 
 #define SCROLL_VIEW_HEIGHT  ((ELEMENT_HEIGHT * 2) + BUFFER_Y) * TOTAL_UI_ELEMENTS
 
+@interface NSControl ()
+
+@property (nonatomic, copy) NSString *emitterPropertyToModify;
+
+@end
+
 @interface MasterViewController ()
 
 @property (nonatomic, strong) IBOutlet NSView *emitterView;
@@ -108,17 +114,24 @@
     NSTextField *lifetimeText = [MasterViewController labelForIndex:index withText:@"Lifetime"];
     [self.settingsView.documentView addSubview:lifetimeText];
     
-    self.lifetimeSlider = [MasterViewController sliderForIndex:0 minValue:0 maxValue:10 target:self];
+    self.lifetimeSlider = [MasterViewController sliderForIndex:0
+                                                      minValue:0
+                                                      maxValue:10
+                                                        target:self
+                                                      property:@"lifetime"];
     [self.settingsView.documentView addSubview:self.lifetimeSlider];
 }
 
 - (void) sliderValueChanged:(id) sender
 {
-    NSSlider *slider = (NSSlider *)sender;
-    [self.emitterCell setValue:@(slider.floatValue) forKey:@"lifetime"];
+    if( [sender isKindOfClass:[NSSlider class]] )
+    {
+        NSSlider *slider = (NSSlider *)sender;
+        [self.emitterCell setValue:@(slider.floatValue) forKey:slider.emitterPropertyToModify];
+    }
+    
     self.emitterLayer.emitterCells = @[];
     self.emitterLayer.emitterCells = @[self.emitterCell];
-    NSLog(@"lifetime value: %f", self.emitterCell.lifetime);
 }
 
 - (void) setEmitterCellImage:(NSString *) imageName
@@ -149,6 +162,7 @@
                      minValue:(double)minValue
                      maxValue:(double)maxValue
                        target:(id) target
+                     property:(NSString*) property
 {
     NSRect sliderFrame = [self sliderRectForIndex:index];
     NSSlider *slider = [[NSSlider alloc] initWithFrame:sliderFrame];
@@ -157,6 +171,7 @@
     [slider setContinuous:YES];
     [slider setTarget:target];
     [slider setAction:@selector(sliderValueChanged:)];
+    [slider setEmitterPropertyToModify:property];
     
     return slider;
 }
