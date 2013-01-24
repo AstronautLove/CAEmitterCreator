@@ -10,17 +10,13 @@
 #import <QuartzCore/QuartzCore.h>
 #import "NSControl+EmitterProperty.h"
 
-#define UI_ELEMENT_START_Y  110
+#define UI_ELEMENT_START_Y  150
 #define SLIDER_SIZE         NSMakeSize(212,21)
 #define TEXTFIELD_SIZE      NSMakeSize(212,21)
 #define ELEMENT_START_X     18
 #define ELEMENT_WIDTH       300
 #define ELEMENT_HEIGHT      21
 #define BUFFER_Y            15
-
-#define TOTAL_UI_ELEMENTS   24
-
-#define SCROLL_VIEW_HEIGHT  ((ELEMENT_HEIGHT * 2) + BUFFER_Y) * TOTAL_UI_ELEMENTS
 
 @interface MasterViewController ()
 
@@ -29,6 +25,7 @@
 @property (nonatomic, strong) IBOutlet NSTextField *durationField;
 @property (nonatomic, strong) IBOutlet NSTextField *repititionField;
 @property NSInteger repititionCount;
+@property (nonatomic, strong) IBOutlet NSPopUpButton *renderModeSelector;
 
 @property (nonatomic, strong) NSImageView *backgroundImage;
 
@@ -43,13 +40,9 @@
 
 - (void)awakeFromNib
 {
-    //self.backgroundImage = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 1024, 768)];
     self.repititionCount = 0;
+    
     self.allUIElements = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIElements" ofType:@"plist"]];
-
-    [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 500, SCROLL_VIEW_HEIGHT)];
-    [self.settingsView.documentView scrollPoint:NSMakePoint(0, SCROLL_VIEW_HEIGHT)];
-    [self.settingsView setHasHorizontalScroller:NO];
     
     [self createUIElements];
     
@@ -62,10 +55,10 @@
     self.emitterCell.lifetimeRange = 0.0f;
     self.emitterCell.emissionLatitude = 0.0f;
     self.emitterCell.emissionRange = M_PI_2;
-    self.emitterCell.name = @"spark";
     self.emitterCell.duration = 5.0f;
     self.emitterLayer.emitterCells = [NSMutableArray arrayWithObject:self.emitterCell];
     self.emitterLayer.lifetime = 0.0f;
+    self.emitterLayer.renderMode = [MasterViewController renderModeForIndex:[self.renderModeSelector indexOfSelectedItem]];
     
     CALayer *rootLayer = [CALayer layer];
     rootLayer.bounds = [self.view bounds];
@@ -86,22 +79,31 @@
 
 - (void)createUIElements
 {
+    [self.renderModeSelector removeAllItems];
+    [self.renderModeSelector addItemsWithTitles:@[@"unordered", @"oldest first", @"oldest last", @"back to front", @"additive"]];
+    [self.renderModeSelector selectItemAtIndex:4];
+    
+    NSInteger scrollViewHeight = ((ELEMENT_HEIGHT * 2) + BUFFER_Y) * self.allUIElements.count;
+    [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 500, [self scrollViewHeight])];
+    [self.settingsView.documentView scrollPoint:NSMakePoint(0, [self scrollViewHeight])];
+    [self.settingsView setHasHorizontalScroller:NO];
+    
     self.durationField.stringValue = @"0.0";
     
     for ( int index = 0; index < self.allUIElements.count; ++index )
     {
         NSDictionary *elementDetails = self.allUIElements[index];
-        NSTextField *textField = [MasterViewController labelForIndex:index];
+        NSTextField *textField = [self labelForIndex:index];
         
         NSControl *control = nil;
         if ( [elementDetails[@"type"] isEqualToString:@"slider"] )
         {
-            control = [MasterViewController sliderForIndex:index
-                                                  minValue:[elementDetails[@"min"] doubleValue]
-                                                  maxValue:[elementDetails[@"max"] doubleValue]
-                                                    target:self
-                                                  property:elementDetails[@"emitterProperty"]
-                                                     label:textField];
+            control = [self sliderForIndex:index
+                                  minValue:[elementDetails[@"min"] doubleValue]
+                                  maxValue:[elementDetails[@"max"] doubleValue]
+                                    target:self
+                                  property:elementDetails[@"emitterProperty"]
+                                     label:textField];
             control.tag = index;
             textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], control.floatValue];
         }
@@ -154,6 +156,11 @@
     }
 }
 
+- (IBAction)renderModeSelectorGotEvent:(id)sender
+{
+    self.emitterLayer.renderMode = [MasterViewController renderModeForIndex:[self.renderModeSelector indexOfSelectedItem]];
+}
+
 - (IBAction)changeEmitterImage:(id)sender
 {
     NSOpenPanel* openDialog = [NSOpenPanel openPanel];
@@ -195,11 +202,29 @@
     self.emitterLayer.birthRate = 0.0f;
     if ( self.repititionCount > 0 && repeat )
     {
-        [self performSelector:@selector(repeat) withObject:nil afterDelay:self.emitterCell.lifetime];
+        [self performSelector:@selector(repeat) withObject:nil afterDelay:self.emitterCell.lifetime + self.emitterCell.lifetimeRange + 0.5];
     }
 }
 
-+ (NSTextField *)labelForIndex:(int)index
++ (NSString * const) renderModeForIndex:(NSUInteger)index
+{
+    switch (index) {
+        case 0:
+            return kCAEmitterLayerUnordered;
+        case 1:
+            return kCAEmitterLayerOldestFirst;
+        case 2:
+            return kCAEmitterLayerOldestLast;
+        case 3:
+            return kCAEmitterLayerBackToFront;
+        case 4:
+            return kCAEmitterLayerAdditive;
+        default:
+            return kCAEmitterLayerAdditive;
+    }
+}
+
+- (NSTextField *)labelForIndex:(int)index
 {
     NSRect labelFrame = [self textViewRectForIndex:index];
     NSTextField *label = [[NSTextField alloc] initWithFrame:labelFrame];
@@ -213,7 +238,7 @@
     return label;
 }
 
-+ (NSSlider *)sliderForIndex:(int)index
+- (NSSlider *)sliderForIndex:(int)index
                     minValue:(double)minValue
                     maxValue:(double)maxValue
                       target:(id) target
@@ -233,16 +258,21 @@
     return slider;
 }
 
-+ (NSRect)textViewRectForIndex:(int) index
+- (NSRect)textViewRectForIndex:(int) index
 {
-    int yPos = SCROLL_VIEW_HEIGHT - UI_ELEMENT_START_Y - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index);
+    NSInteger yPos = [self scrollViewHeight] - UI_ELEMENT_START_Y - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index);
     return NSMakeRect(ELEMENT_START_X, yPos, ELEMENT_WIDTH, ELEMENT_HEIGHT);
 }
 
-+ (NSRect)sliderRectForIndex:(int) index
+- (NSRect)sliderRectForIndex:(int) index
 {
-    int yPos = SCROLL_VIEW_HEIGHT - UI_ELEMENT_START_Y - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index) - ELEMENT_HEIGHT;
+    NSInteger yPos = [self scrollViewHeight] - UI_ELEMENT_START_Y - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index) - ELEMENT_HEIGHT;
     return NSMakeRect(ELEMENT_START_X, yPos, ELEMENT_WIDTH, ELEMENT_HEIGHT);
+}
+
+- (NSInteger) scrollViewHeight
+{
+    return UI_ELEMENT_START_Y + ((ELEMENT_HEIGHT * 2) + BUFFER_Y) * (self.allUIElements.count + 3);
 }
 
 @end
