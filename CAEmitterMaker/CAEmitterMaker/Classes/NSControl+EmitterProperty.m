@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 
 static char const * const kPropertyKey = "emitterPropertyKey";
+static char const * const kLabelKey = "labelKey";
 
 @implementation NSControl (EmitterProperty)
 
@@ -21,6 +22,16 @@ static char const * const kPropertyKey = "emitterPropertyKey";
 - (NSString *) emitterPropertyToModify
 {
     return objc_getAssociatedObject(self, kPropertyKey);
+}
+
+- (void) setLabel:(NSTextView *)label
+{
+    objc_setAssociatedObject(self, kLabelKey, label, OBJC_ASSOCIATION_RETAIN);
+}
+
+- (NSTextField *) label
+{
+    return objc_getAssociatedObject(self, kLabelKey);
 }
 
 @end

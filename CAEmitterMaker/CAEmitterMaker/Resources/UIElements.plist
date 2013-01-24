@@ -8,11 +8,131 @@
 		<key>min</key>
 		<string>0</string>
 		<key>max</key>
+		<string>1000</string>
+		<key>emitterProperty</key>
+		<string>birthRate</string>
+		<key>labelString</key>
+		<string>birth rate</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
 		<string>10</string>
 		<key>emitterProperty</key>
 		<string>lifetime</string>
 		<key>labelString</key>
 		<string>lifetime</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>5</string>
+		<key>emitterProperty</key>
+		<string>lifetimeRange</string>
+		<key>labelString</key>
+		<string>lifetime variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>2</string>
+		<key>emitterProperty</key>
+		<string>scaleSpeed</string>
+		<key>labelString</key>
+		<string>scale speed</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>100</string>
+		<key>emitterProperty</key>
+		<string>velocity</string>
+		<key>labelString</key>
+		<string>velocity</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>100</string>
+		<key>emitterProperty</key>
+		<string>velocityRange</string>
+		<key>labelString</key>
+		<string>velocity variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>6.28318530718</string>
+		<key>emitterProperty</key>
+		<string>emissionLatitude</string>
+		<key>labelString</key>
+		<string>emission latitude</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>6.28318530718</string>
+		<key>emitterProperty</key>
+		<string>emissionLongitude</string>
+		<key>labelString</key>
+		<string>emission longitude</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>6.28318530718</string>
+		<key>emitterProperty</key>
+		<string>emissionRange</string>
+		<key>labelString</key>
+		<string>emission variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>6.28318530718</string>
+		<key>emitterProperty</key>
+		<string>spin</string>
+		<key>labelString</key>
+		<string>spin</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>6.28318530718</string>
+		<key>emitterProperty</key>
+		<string>spinRange</string>
+		<key>labelString</key>
+		<string>spin variance</string>
 	</dict>
 </array>
 </plist>

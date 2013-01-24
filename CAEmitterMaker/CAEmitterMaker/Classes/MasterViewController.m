@@ -14,7 +14,7 @@
 #define SLIDER_SIZE         NSMakeSize(212,21)
 #define TEXTFIELD_SIZE      NSMakeSize(212,21)
 #define ELEMENT_START_X     18
-#define ELEMENT_WIDTH       212
+#define ELEMENT_WIDTH       300
 #define ELEMENT_HEIGHT      21
 #define BUFFER_Y            15
 
@@ -26,37 +26,16 @@
 
 @property (nonatomic, strong) IBOutlet NSView *emitterView;
 @property (nonatomic, strong) IBOutlet NSScrollView *settingsView;
+@property (nonatomic, strong) IBOutlet NSTextField *durationField;
+@property (nonatomic, strong) IBOutlet NSTextField *repititionField;
+@property NSInteger repititionCount;
+
+@property (nonatomic, strong) IBOutlet NSImageView *backgroundImage;
+
 @property (nonatomic, strong) CAEmitterLayer *emitterLayer;
 @property (nonatomic, strong) CAEmitterCell *emitterCell;
 
-@property (nonatomic, strong) NSSlider *lifetimeSlider;
-@property (nonatomic, strong) NSSlider *lifetimeRangeSlider;
-@property (nonatomic, strong) NSSlider *birthRateSlider;
-@property (nonatomic, strong) NSSlider *scaleSpeedSlider;
-@property (nonatomic, strong) NSSlider *velocitySlider;
-@property (nonatomic, strong) NSSlider *velocityRangeSlider;
-@property (nonatomic, strong) NSSlider *xAccelSlider;
-@property (nonatomic, strong) NSSlider *yAccelSlider;
-@property (nonatomic, strong) NSSlider *zAccelSlider;
-
-@property (nonatomic, strong) NSSlider *redRangeSlider;
-@property (nonatomic, strong) NSSlider *redSpeedSlider;
-@property (nonatomic, strong) NSSlider *greenRangeSlider;
-@property (nonatomic, strong) NSSlider *greenSpeedSlider;
-@property (nonatomic, strong) NSSlider *blueRangeSlider;
-@property (nonatomic, strong) NSSlider *blueSpeedSlider;
-@property (nonatomic, strong) NSSlider *alphaRangeSlider;
-@property (nonatomic, strong) NSSlider *alphaSpeedSlider;
-
-@property (nonatomic, strong) NSSlider *scaleSlider;
-@property (nonatomic, strong) NSSlider *scaleRangeSlider;
-
-@property (nonatomic, strong) NSSlider *spinSlider;
-@property (nonatomic, strong) NSSlider *spinRangeSlider;
-
-@property (nonatomic, strong) NSSlider *emissionLattitudeSlider;
-@property (nonatomic, strong) NSSlider *emissionLongitudeSlider;
-@property (nonatomic, strong) NSSlider *emissionRange;
+@property (nonatomic, strong) NSArray *allUIElements;
 
 @end
 
@@ -64,7 +43,10 @@
 
 - (void) awakeFromNib
 {
-    [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 250, SCROLL_VIEW_HEIGHT)];
+    self.repititionCount = 0;
+    self.allUIElements = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIElements" ofType:@"plist"]];
+
+    [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 600, SCROLL_VIEW_HEIGHT)];
     [self.settingsView.documentView scrollPoint:NSMakePoint(0, SCROLL_VIEW_HEIGHT)];
     [self.settingsView setHasHorizontalScroller:NO];
     
@@ -78,10 +60,11 @@
     self.emitterCell.birthRate = 10;
     self.emitterCell.lifetime = 2.0f;
     self.emitterCell.lifetimeRange = 0.0f;
-    self.emitterCell.color = [[NSColor colorWithDeviceRed:1.0 green:0.0 blue:0.0 alpha:1.0] CGColor];
     self.emitterCell.emissionLatitude = 0.0f;
     self.emitterCell.emissionRange = M_PI_2;
     self.emitterCell.name = @"spark";
+    self.emitterCell.duration = 5.0f;
+    self.emitterLayer.emitterCells = [NSMutableArray arrayWithObject:self.emitterCell];
     
     CALayer *rootLayer = [CALayer layer];
     rootLayer.bounds = [self.view bounds];
@@ -94,7 +77,6 @@
                                                     self.emitterView.bounds.size.height / 2);
     NSLog(@"%@", NSStringFromPoint(self.emitterLayer.emitterPosition));
     self.emitterLayer.emitterSize = CGSizeMake(32, 32);
-    self.emitterLayer.emitterCells = @[self.emitterCell];
     
     [rootLayer addSublayer:self.emitterLayer];
     [self.emitterView setLayer:rootLayer];
@@ -104,31 +86,38 @@
 
 - (void) createUIElements
 {
-    NSArray *allUIElements = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIElements" ofType:@"plist"]];
-    NSLog(@"%@", allUIElements);
-    int index = 0;
+    self.durationField.stringValue = @"0.0";
     
-    NSTextField *lifetimeText = [MasterViewController labelForIndex:index withText:@"Lifetime"];
-    [self.settingsView.documentView addSubview:lifetimeText];
-    
-    self.lifetimeSlider = [MasterViewController sliderForIndex:0
-                                                      minValue:0
-                                                      maxValue:10
-                                                        target:self
-                                                      property:@"lifetime"];
-    [self.settingsView.documentView addSubview:self.lifetimeSlider];
+    for( int index = 0; index < self.allUIElements.count; ++index )
+    {
+        NSDictionary *elementDetails = self.allUIElements[index];
+        NSTextField *textField = [MasterViewController labelForIndex:index];
+        
+        NSControl *control = nil;
+        if( [elementDetails[@"type"] isEqualToString:@"slider"] )
+        {
+            control = [MasterViewController sliderForIndex:index
+                                                  minValue:[elementDetails[@"min"] doubleValue]
+                                                  maxValue:[elementDetails[@"max"] doubleValue]
+                                                    target:self
+                                                  property:elementDetails[@"emitterProperty"]
+                                                     label:textField];
+            control.tag = index;
+            textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], control.floatValue];
+        }
+        
+        [self.settingsView.documentView addSubview:textField];
+        [self.settingsView.documentView addSubview:control];
+    }
 }
 
 - (void) sliderValueChanged:(id) sender
 {
-    if( [sender isKindOfClass:[NSSlider class]] )
-    {
-        NSSlider *slider = (NSSlider *)sender;
-        [self.emitterCell setValue:@(slider.floatValue) forKey:slider.emitterPropertyToModify];
-    }
-    
-    self.emitterLayer.emitterCells = @[];
+    NSSlider *slider = (NSSlider *)sender;
+    [self.emitterCell setValue:@(slider.floatValue) forKey:slider.emitterPropertyToModify];
     self.emitterLayer.emitterCells = @[self.emitterCell];
+    NSString *labelText = (self.allUIElements[slider.tag])[@"labelString"];
+    slider.label.stringValue = [NSString stringWithFormat:@"%@: %.3f", labelText, slider.floatValue];
 }
 
 - (void) setEmitterCellImage:(NSString *) imageName
@@ -140,7 +129,47 @@
     [self.emitterCell setContents:(id)CFBridgingRelease(image)];
 }
 
-+ (NSTextField *) labelForIndex:(int)index withText:(NSString *)text
+- (IBAction) showButtonGotEvent:(id)sender
+{
+    [self stopEmitting:YES];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    self.repititionCount = [self.repititionField.stringValue integerValue];
+    NSLog(@"%li", self.repititionCount);
+    self.emitterLayer.birthRate = 1.0f;
+    [self startEmitting];
+}
+
+- (void) startEmitting
+{
+    self.emitterLayer.emitterCells = @[];
+    self.emitterLayer.emitterCells = @[self.emitterCell];
+    float duration = fabsf([[self.durationField stringValue] floatValue]);
+    [self performSelector:@selector(stopEmitting) withObject:nil afterDelay:duration];
+}
+
+- (void)repeat
+{
+    self.emitterLayer.birthRate = 1.0f;
+    [self startEmitting];
+}
+
+- (void)stopEmitting
+{
+    [self stopEmitting:YES];
+}
+
+- (void) stopEmitting:(BOOL)repeat
+{
+    --self.repititionCount;
+    
+    self.emitterLayer.birthRate = 0.0f;
+    if (self.repititionCount > 0 && repeat)
+    {
+        [self performSelector:@selector(repeat) withObject:nil afterDelay:self.emitterCell.lifetime];
+    }
+}
+
++ (NSTextField *) labelForIndex:(int)index
 {
     NSRect labelFrame = [self textViewRectForIndex:index];
     NSTextField *label = [[NSTextField alloc] initWithFrame:labelFrame];
@@ -149,9 +178,8 @@
     [label setDrawsBackground:NO];
     [label setEditable:NO];
     [label setSelectable:NO];
-    [label setAlignment:NSCenterTextAlignment];
+    [label setAlignment:NSLeftTextAlignment];
     [label setFont:[NSFont fontWithName:[[label font] fontName] size:20]];
-    [label setStringValue:text];
     return label;
 }
 
@@ -160,6 +188,7 @@
                      maxValue:(double)maxValue
                        target:(id) target
                      property:(NSString*) property
+                        label:(NSTextField *) label
 {
     NSRect sliderFrame = [self sliderRectForIndex:index];
     NSSlider *slider = [[NSSlider alloc] initWithFrame:sliderFrame];
@@ -169,6 +198,7 @@
     [slider setTarget:target];
     [slider setAction:@selector(sliderValueChanged:)];
     [slider setEmitterPropertyToModify:property];
+    [slider setLabel:label];
     
     return slider;
 }

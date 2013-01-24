@@ -10,6 +10,7 @@
 
 @interface NSControl (EmitterProperty)
 
-@property (nonatomic, copy) NSString *emitterPropertyToModify;
+@property NSString *emitterPropertyToModify;
+@property NSTextField *label;
 
 @end
