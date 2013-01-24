@@ -10,7 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "NSControl+EmitterProperty.h"
 
-#define UI_ELEMENT_START_Y  79
+#define UI_ELEMENT_START_Y  110
 #define SLIDER_SIZE         NSMakeSize(212,21)
 #define TEXTFIELD_SIZE      NSMakeSize(212,21)
 #define ELEMENT_START_X     18
@@ -30,7 +30,7 @@
 @property (nonatomic, strong) IBOutlet NSTextField *repititionField;
 @property NSInteger repititionCount;
 
-@property (nonatomic, strong) IBOutlet NSImageView *backgroundImage;
+@property (nonatomic, strong) NSImageView *backgroundImage;
 
 @property (nonatomic, strong) CAEmitterLayer *emitterLayer;
 @property (nonatomic, strong) CAEmitterCell *emitterCell;
@@ -41,12 +41,13 @@
 
 @implementation MasterViewController
 
-- (void) awakeFromNib
+- (void)awakeFromNib
 {
+    //self.backgroundImage = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 1024, 768)];
     self.repititionCount = 0;
     self.allUIElements = [NSArray arrayWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"UIElements" ofType:@"plist"]];
 
-    [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 600, SCROLL_VIEW_HEIGHT)];
+    [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 500, SCROLL_VIEW_HEIGHT)];
     [self.settingsView.documentView scrollPoint:NSMakePoint(0, SCROLL_VIEW_HEIGHT)];
     [self.settingsView setHasHorizontalScroller:NO];
     
@@ -54,7 +55,6 @@
     
     // Create the emitter layer and set our emitter view to use it
     self.emitterCell = [CAEmitterCell emitterCell];
-    [self setEmitterCellImage:@"spark.png"];
     self.emitterCell.velocity = 100;
     self.emitterCell.velocityRange = 50;
     self.emitterCell.birthRate = 10;
@@ -65,11 +65,11 @@
     self.emitterCell.name = @"spark";
     self.emitterCell.duration = 5.0f;
     self.emitterLayer.emitterCells = [NSMutableArray arrayWithObject:self.emitterCell];
+    self.emitterLayer.lifetime = 0.0f;
     
     CALayer *rootLayer = [CALayer layer];
     rootLayer.bounds = [self.view bounds];
     rootLayer.frame = rootLayer.bounds;
-    rootLayer.backgroundColor = CGColorGetConstantColor(kCGColorBlack);
     
     self.emitterLayer = [[CAEmitterLayer alloc] init];
     self.emitterLayer.frame = rootLayer.bounds;
@@ -84,17 +84,17 @@
     [self.view setNeedsDisplay:YES];
 }
 
-- (void) createUIElements
+- (void)createUIElements
 {
     self.durationField.stringValue = @"0.0";
     
-    for( int index = 0; index < self.allUIElements.count; ++index )
+    for ( int index = 0; index < self.allUIElements.count; ++index )
     {
         NSDictionary *elementDetails = self.allUIElements[index];
         NSTextField *textField = [MasterViewController labelForIndex:index];
         
         NSControl *control = nil;
-        if( [elementDetails[@"type"] isEqualToString:@"slider"] )
+        if ( [elementDetails[@"type"] isEqualToString:@"slider"] )
         {
             control = [MasterViewController sliderForIndex:index
                                                   minValue:[elementDetails[@"min"] doubleValue]
@@ -111,7 +111,7 @@
     }
 }
 
-- (void) sliderValueChanged:(id) sender
+- (void)sliderValueChanged:(id)sender
 {
     NSSlider *slider = (NSSlider *)sender;
     [self.emitterCell setValue:@(slider.floatValue) forKey:slider.emitterPropertyToModify];
@@ -120,16 +120,15 @@
     slider.label.stringValue = [NSString stringWithFormat:@"%@: %.3f", labelText, slider.floatValue];
 }
 
-- (void) setEmitterCellImage:(NSString *) imageName
+- (void)setEmitterCellImage:(NSURL *)imageURL
 {
-    CFURLRef url = (__bridge CFURLRef) [[NSBundle mainBundle] URLForResource:imageName withExtension:nil];
-    CGImageSourceRef source = CGImageSourceCreateWithURL(url, NULL);
+    CGImageSourceRef source = CGImageSourceCreateWithURL((__bridge CFURLRef)imageURL, NULL);
     CGImageRef image = CGImageSourceCreateImageAtIndex(source, 0, NULL);
     CFRelease(source);
     [self.emitterCell setContents:(id)CFBridgingRelease(image)];
 }
 
-- (IBAction) showButtonGotEvent:(id)sender
+- (IBAction)showButtonGotEvent:(id)sender
 {
     [self stopEmitting:YES];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -139,7 +138,38 @@
     [self startEmitting];
 }
 
-- (void) startEmitting
+- (IBAction)changeBackgroundImageButtonGotEvent:(id)sender
+{
+    NSOpenPanel* openDialog = [NSOpenPanel openPanel];
+    
+    [openDialog setCanChooseFiles:YES];
+    [openDialog setAllowsMultipleSelection:NO];
+    [openDialog setCanChooseDirectories:NO];
+    
+    if ( [openDialog runModal] == NSOKButton )
+    {
+        NSURL *fileURL = [openDialog URLs][0];
+        NSImage *image = [[NSImage alloc] initWithContentsOfURL:fileURL];
+        self.backgroundImage.image = image;
+    }
+}
+
+- (IBAction)changeEmitterImage:(id)sender
+{
+    NSOpenPanel* openDialog = [NSOpenPanel openPanel];
+    
+    [openDialog setCanChooseFiles:YES];
+    [openDialog setAllowsMultipleSelection:NO];
+    [openDialog setCanChooseDirectories:NO];
+    
+    if ( [openDialog runModal] == NSOKButton )
+    {
+        NSURL *fileURL = [openDialog URLs][0];
+        [self setEmitterCellImage:fileURL];
+    }
+}
+
+- (void)startEmitting
 {
     self.emitterLayer.emitterCells = @[];
     self.emitterLayer.emitterCells = @[self.emitterCell];
@@ -158,18 +188,18 @@
     [self stopEmitting:YES];
 }
 
-- (void) stopEmitting:(BOOL)repeat
+- (void)stopEmitting:(BOOL)repeat
 {
     --self.repititionCount;
     
     self.emitterLayer.birthRate = 0.0f;
-    if (self.repititionCount > 0 && repeat)
+    if ( self.repititionCount > 0 && repeat )
     {
         [self performSelector:@selector(repeat) withObject:nil afterDelay:self.emitterCell.lifetime];
     }
 }
 
-+ (NSTextField *) labelForIndex:(int)index
++ (NSTextField *)labelForIndex:(int)index
 {
     NSRect labelFrame = [self textViewRectForIndex:index];
     NSTextField *label = [[NSTextField alloc] initWithFrame:labelFrame];
@@ -183,12 +213,12 @@
     return label;
 }
 
-+ (NSSlider *) sliderForIndex:(int)index
-                     minValue:(double)minValue
-                     maxValue:(double)maxValue
-                       target:(id) target
-                     property:(NSString*) property
-                        label:(NSTextField *) label
++ (NSSlider *)sliderForIndex:(int)index
+                    minValue:(double)minValue
+                    maxValue:(double)maxValue
+                      target:(id) target
+                    property:(NSString*) property
+                       label:(NSTextField *) label
 {
     NSRect sliderFrame = [self sliderRectForIndex:index];
     NSSlider *slider = [[NSSlider alloc] initWithFrame:sliderFrame];
@@ -203,13 +233,13 @@
     return slider;
 }
 
-+ (NSRect) textViewRectForIndex:(int) index
++ (NSRect)textViewRectForIndex:(int) index
 {
     int yPos = SCROLL_VIEW_HEIGHT - UI_ELEMENT_START_Y - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index);
     return NSMakeRect(ELEMENT_START_X, yPos, ELEMENT_WIDTH, ELEMENT_HEIGHT);
 }
 
-+ (NSRect) sliderRectForIndex:(int) index
++ (NSRect)sliderRectForIndex:(int) index
 {
     int yPos = SCROLL_VIEW_HEIGHT - UI_ELEMENT_START_Y - ((( 2 * ELEMENT_HEIGHT ) + BUFFER_Y) * index) - ELEMENT_HEIGHT;
     return NSMakeRect(ELEMENT_START_X, yPos, ELEMENT_WIDTH, ELEMENT_HEIGHT);
