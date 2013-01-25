@@ -8,9 +8,10 @@
 
 #import "MasterViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 #import "NSControl+EmitterProperty.h"
 
-#define UI_ELEMENT_START_Y  150
+#define UI_ELEMENT_START_Y  200
 #define SLIDER_SIZE         NSMakeSize(212,21)
 #define TEXTFIELD_SIZE      NSMakeSize(212,21)
 #define ELEMENT_START_X     18
@@ -26,6 +27,8 @@
 @property (nonatomic, strong) IBOutlet NSTextField *repititionField;
 @property NSInteger repititionCount;
 @property (nonatomic, strong) IBOutlet NSPopUpButton *renderModeSelector;
+@property (nonatomic, strong) IBOutlet NSTextField *emitterCellImageNameTextField;
+@property (nonatomic, strong) IBOutlet NSTextField *backgroundImageNameTextField;
 
 @property (nonatomic, strong) NSImageView *backgroundImage;
 
@@ -33,6 +36,8 @@
 @property (nonatomic, strong) CAEmitterCell *emitterCell;
 
 @property (nonatomic, strong) NSArray *allUIElements;
+@property (nonatomic, strong) NSMutableArray *allControls;
+@property (nonatomic, strong) NSMutableArray *allControlLabels;
 
 @end
 
@@ -79,11 +84,12 @@
 
 - (void)createUIElements
 {
+    self.allControlLabels = [NSMutableArray arrayWithCapacity:self.allControlLabels.count];
+    self.allControls = [NSMutableArray arrayWithCapacity:self.allUIElements.count];
     [self.renderModeSelector removeAllItems];
     [self.renderModeSelector addItemsWithTitles:@[@"unordered", @"oldest first", @"oldest last", @"back to front", @"additive"]];
     [self.renderModeSelector selectItemAtIndex:4];
     
-    NSInteger scrollViewHeight = ((ELEMENT_HEIGHT * 2) + BUFFER_Y) * self.allUIElements.count;
     [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 500, [self scrollViewHeight])];
     [self.settingsView.documentView scrollPoint:NSMakePoint(0, [self scrollViewHeight])];
     [self.settingsView setHasHorizontalScroller:NO];
@@ -110,6 +116,9 @@
         
         [self.settingsView.documentView addSubview:textField];
         [self.settingsView.documentView addSubview:control];
+        
+        [self.allControlLabels addObject:textField];
+        [self.allControls addObject:control];
     }
 }
 
@@ -153,6 +162,7 @@
         NSURL *fileURL = [openDialog URLs][0];
         NSImage *image = [[NSImage alloc] initWithContentsOfURL:fileURL];
         self.backgroundImage.image = image;
+        self.backgroundImageNameTextField.stringValue = fileURL.lastPathComponent;
     }
 }
 
@@ -173,7 +183,97 @@
     {
         NSURL *fileURL = [openDialog URLs][0];
         [self setEmitterCellImage:fileURL];
+        self.emitterCellImageNameTextField.stringValue = fileURL.lastPathComponent;
     }
+}
+
+- (IBAction)exportButtonGotEvent:(id)sender
+{
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    
+    if ([saveDialog runModal] == NSOKButton)
+    {
+        NSURL *fileURL = saveDialog.URL;
+        
+        NSData *serializedEmitter = [self serializedEmitter];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        [fileManager createFileAtPath:fileURL.path contents:serializedEmitter attributes:nil];
+    }
+}
+
+- (IBAction)loadButtonPressed:(id)sender
+{
+    NSOpenPanel *openDialog = [NSOpenPanel openPanel];
+    
+    if ([openDialog runModal] == NSOKButton)
+    {
+        NSURL *fileURL = [openDialog URLs][0];
+        NSData *data = [[NSMutableData alloc] initWithContentsOfFile:fileURL.path];
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+        NSDictionary *deserializedEmitterCell = [unarchiver decodeObjectForKey:@"Some Key Value"];
+        [unarchiver finishDecoding];
+        
+        [self loadEmitterCellFromDictionary:deserializedEmitterCell];
+    }
+}
+
+- (void)loadEmitterCellFromDictionary:(NSDictionary *)emitterCellAsDictionary
+{
+    CAEmitterCell *cell = [[CAEmitterCell alloc] init];
+    [cell setValuesForKeysWithDictionary:emitterCellAsDictionary];
+    
+    self.emitterLayer.lifetime = 0.0f;
+    self.emitterLayer.emitterCells = @[cell];
+    
+    for (NSString *propertyName in [emitterCellAsDictionary allKeys])
+    {
+        for (NSControl *control in self.allControls)
+        {
+            if ([control.emitterPropertyToModify isEqualToString:propertyName])
+            {
+                control.floatValue = [emitterCellAsDictionary[propertyName] floatValue];
+                NSInteger index = [self.allControls indexOfObject:control];
+                NSDictionary *elementDetails = self.allUIElements[index];
+                NSTextField *textField = self.allControlLabels[index];
+                textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], control.floatValue];
+            }
+        }
+    }
+}
+
+- (NSData *)serializedEmitter
+{
+    NSMutableArray *propertyNames = [[NSMutableArray alloc] init];
+    unsigned int propertyCount = 0;
+    objc_property_t *properties = class_copyPropertyList([self.emitterCell class], &propertyCount);
+    
+    for (unsigned int i = 0; i < propertyCount; ++i) {
+        objc_property_t property = properties[i];
+        const char * name = property_getName(property);
+        
+        [propertyNames addObject:[NSString stringWithUTF8String:name]];
+    }
+    
+    free(properties);
+    
+    NSMutableDictionary *propertiesToSave = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
+    for (NSString *propertyName in propertyNames)
+    {
+        for (NSControl *propertyControl in self.allControls)
+        {
+            if ([propertyControl.emitterPropertyToModify isEqualToString:propertyName])
+            {
+                propertiesToSave[propertyName] = [self.emitterCell valueForKey:propertyName];
+            }
+        }
+    }
+    
+    NSMutableData *serializedProperties = [[NSMutableData alloc] init];
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:serializedProperties];
+    [archiver encodeObject:propertiesToSave forKey:@"Some Key Value"];
+    [archiver finishEncoding];
+    
+    return serializedProperties;
 }
 
 - (void)startEmitting
@@ -206,7 +306,7 @@
     }
 }
 
-+ (NSString * const) renderModeForIndex:(NSUInteger)index
++ (NSString * const)renderModeForIndex:(NSUInteger)index
 {
     switch (index) {
         case 0:
@@ -222,6 +322,20 @@
         default:
             return kCAEmitterLayerAdditive;
     }
+}
+
++ (NSUInteger)indexForRenderMode:(NSString * const)renderMode
+{
+    if ([renderMode isEqualToString:kCAEmitterLayerUnordered])
+        return 0;
+    else if ([renderMode isEqualToString:kCAEmitterLayerOldestFirst])
+        return 1;
+    else if ([renderMode isEqualToString:kCAEmitterLayerOldestLast])
+        return 2;
+    else if ([renderMode isEqualToString:kCAEmitterLayerBackToFront])
+        return 3;
+    else
+        return 4;
 }
 
 - (NSTextField *)labelForIndex:(int)index

@@ -84,7 +84,7 @@
 		<key>emitterProperty</key>
 		<string>emissionLongitude</string>
 		<key>labelString</key>
-		<string>emission longitude</string>
+		<string>emission angle</string>
 	</dict>
 	<dict>
 		<key>type</key>
@@ -96,7 +96,7 @@
 		<key>emitterProperty</key>
 		<string>emissionRange</string>
 		<key>labelString</key>
-		<string>emission variance</string>
+		<string>angle variance</string>
 	</dict>
 	<dict>
 		<key>type</key>
