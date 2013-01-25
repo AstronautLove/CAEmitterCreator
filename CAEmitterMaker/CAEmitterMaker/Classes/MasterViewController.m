@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <objc/runtime.h>
 #import "NSControl+EmitterProperty.h"
+#import "CAEmitterCell+ImageName.h"
 
 #define UI_ELEMENT_START_Y  200
 #define SLIDER_SIZE         NSMakeSize(212,21)
@@ -37,7 +38,6 @@
 
 @property (nonatomic, strong) NSArray *allUIElements;
 @property (nonatomic, strong) NSMutableArray *allControls;
-@property (nonatomic, strong) NSMutableArray *allControlLabels;
 
 @end
 
@@ -53,16 +53,9 @@
     
     // Create the emitter layer and set our emitter view to use it
     self.emitterCell = [CAEmitterCell emitterCell];
-    self.emitterCell.velocity = 100;
-    self.emitterCell.velocityRange = 50;
-    self.emitterCell.birthRate = 10;
-    self.emitterCell.lifetime = 2.0f;
-    self.emitterCell.lifetimeRange = 0.0f;
-    self.emitterCell.emissionLatitude = 0.0f;
-    self.emitterCell.emissionRange = M_PI_2;
-    self.emitterCell.duration = 5.0f;
+    self.emitterCell.name = @"name";
     self.emitterLayer.emitterCells = [NSMutableArray arrayWithObject:self.emitterCell];
-    self.emitterLayer.lifetime = 0.0f;
+    self.emitterLayer.birthRate = 0.0f;
     self.emitterLayer.renderMode = [MasterViewController renderModeForIndex:[self.renderModeSelector indexOfSelectedItem]];
     
     CALayer *rootLayer = [CALayer layer];
@@ -84,7 +77,6 @@
 
 - (void)createUIElements
 {
-    self.allControlLabels = [NSMutableArray arrayWithCapacity:self.allControlLabels.count];
     self.allControls = [NSMutableArray arrayWithCapacity:self.allUIElements.count];
     [self.renderModeSelector removeAllItems];
     [self.renderModeSelector addItemsWithTitles:@[@"unordered", @"oldest first", @"oldest last", @"back to front", @"additive"]];
@@ -114,10 +106,11 @@
             textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], control.floatValue];
         }
         
+        control.label = textField;
+        
         [self.settingsView.documentView addSubview:textField];
         [self.settingsView.documentView addSubview:control];
         
-        [self.allControlLabels addObject:textField];
         [self.allControls addObject:control];
     }
 }
@@ -137,6 +130,7 @@
     CGImageRef image = CGImageSourceCreateImageAtIndex(source, 0, NULL);
     CFRelease(source);
     [self.emitterCell setContents:(id)CFBridgingRelease(image)];
+    self.emitterCell.imageName = imageURL.lastPathComponent;
 }
 
 - (IBAction)showButtonGotEvent:(id)sender
@@ -219,10 +213,10 @@
 
 - (void)loadEmitterCellFromDictionary:(NSDictionary *)emitterCellAsDictionary
 {
-    CAEmitterCell *cell = [[CAEmitterCell alloc] init];
+    CAEmitterCell *cell = [CAEmitterCell emitterCell];
     [cell setValuesForKeysWithDictionary:emitterCellAsDictionary];
     
-    self.emitterLayer.lifetime = 0.0f;
+    self.emitterLayer.birthRate = 0.0f;
     self.emitterLayer.emitterCells = @[cell];
     
     for (NSString *propertyName in [emitterCellAsDictionary allKeys])
@@ -234,8 +228,9 @@
                 control.floatValue = [emitterCellAsDictionary[propertyName] floatValue];
                 NSInteger index = [self.allControls indexOfObject:control];
                 NSDictionary *elementDetails = self.allUIElements[index];
-                NSTextField *textField = self.allControlLabels[index];
-                textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], control.floatValue];
+                NSTextField *textField = control.label;
+                float propVal = [[cell valueForKey:propertyName] floatValue];
+                textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], propVal];
             }
         }
     }
@@ -261,12 +256,14 @@
     {
         for (NSControl *propertyControl in self.allControls)
         {
-            if ([propertyControl.emitterPropertyToModify isEqualToString:propertyName])
+            if([propertyControl.emitterPropertyToModify isEqualToString:propertyName])
             {
                 propertiesToSave[propertyName] = [self.emitterCell valueForKey:propertyName];
             }
         }
     }
+    
+    propertiesToSave[@"imageName"] = self.emitterCell.imageName;
     
     NSMutableData *serializedProperties = [[NSMutableData alloc] init];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:serializedProperties];
