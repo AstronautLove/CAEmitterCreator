@@ -12,7 +12,7 @@
 #import "NSControl+EmitterProperty.h"
 #import "CAEmitterCell+ImageName.h"
 
-#define UI_ELEMENT_START_Y  200
+#define UI_ELEMENT_START_Y  400
 #define SLIDER_SIZE         NSMakeSize(212,21)
 #define TEXTFIELD_SIZE      NSMakeSize(212,21)
 #define ELEMENT_START_X     18
@@ -26,8 +26,13 @@
 @property (nonatomic, strong) IBOutlet NSScrollView *settingsView;
 @property (nonatomic, strong) IBOutlet NSTextField *durationField;
 @property (nonatomic, strong) IBOutlet NSTextField *repititionField;
+@property (nonatomic, strong) IBOutlet NSTextField *emitterPosXField;
+@property (nonatomic, strong) IBOutlet NSTextField *emitterPosYField;
+@property (nonatomic, strong) IBOutlet NSTextField *emitterSizeWidthField;
+@property (nonatomic, strong) IBOutlet NSTextField *emitterSizeHeightField;
 @property NSInteger repititionCount;
 @property (nonatomic, strong) IBOutlet NSPopUpButton *renderModeSelector;
+@property (nonatomic, strong) IBOutlet NSPopUpButton *emitterShapeSelector;
 @property (nonatomic, strong) IBOutlet NSTextField *emitterCellImageNameTextField;
 @property (nonatomic, strong) IBOutlet NSTextField *backgroundImageNameTextField;
 
@@ -82,6 +87,10 @@
     [self.renderModeSelector addItemsWithTitles:@[@"unordered", @"oldest first", @"oldest last", @"back to front", @"additive"]];
     [self.renderModeSelector selectItemAtIndex:4];
     
+    [self.emitterShapeSelector removeAllItems];
+    [self.emitterShapeSelector addItemsWithTitles:@[@"point", @"line", @"rectangle", @"cuboid", @"circle", @"sphere"]];
+    [self.emitterShapeSelector selectItemAtIndex:0];
+    
     [self.settingsView.documentView setFrame:NSMakeRect(0, 0, 500, [self scrollViewHeight])];
     [self.settingsView.documentView scrollPoint:NSMakePoint(0, [self scrollViewHeight])];
     [self.settingsView setHasHorizontalScroller:NO];
@@ -131,6 +140,8 @@
     CFRelease(source);
     [self.emitterCell setContents:(id)CFBridgingRelease(image)];
     self.emitterCell.imageName = imageURL.lastPathComponent;
+
+    self.emitterCell.color = [[NSColor whiteColor] CGColor];
 }
 
 - (IBAction)showButtonGotEvent:(id)sender
@@ -163,6 +174,35 @@
 - (IBAction)renderModeSelectorGotEvent:(id)sender
 {
     self.emitterLayer.renderMode = [MasterViewController renderModeForIndex:[self.renderModeSelector indexOfSelectedItem]];
+}
+
+- (IBAction)emitterShapeSelectorGotEvent:(id)sender
+{
+    self.emitterLayer.emitterShape = [MasterViewController emitterShapeForIndex:[self.emitterShapeSelector indexOfSelectedItem]];
+}
+
+- (IBAction)changeEmitterPositionX:(id)sender
+{
+    NSTextField *textField = (NSTextField *)sender;
+    self.emitterLayer.emitterPosition = CGPointMake(textField.floatValue, self.emitterLayer.emitterPosition.y);
+}
+
+- (IBAction)changeEmitterPositionY:(id)sender
+{
+    NSTextField *textField = (NSTextField *)sender;
+    self.emitterLayer.emitterPosition = CGPointMake(self.emitterLayer.emitterPosition.x, 768 - textField.floatValue);
+}
+
+- (IBAction)changeEmitterSizeWidth:(id)sender
+{
+    NSTextField *textField = (NSTextField *)sender;
+    self.emitterLayer.emitterSize = CGSizeMake(textField.floatValue, self.emitterLayer.emitterSize.height);
+}
+
+- (IBAction)changeEmitterSizeHeight:(id)sender
+{
+    NSTextField *textField = (NSTextField *)sender;
+    self.emitterLayer.emitterSize = CGSizeMake(self.emitterLayer.emitterSize.width, textField.floatValue);
 }
 
 - (IBAction)changeEmitterImage:(id)sender
@@ -213,19 +253,34 @@
 
 - (void)loadEmitterCellFromDictionary:(NSDictionary *)emitterCellAsDictionary
 {
+    NSMutableDictionary *layerProperties = [emitterCellAsDictionary mutableCopy];
+    NSDictionary *emitterProperties = layerProperties[@"cellProperties"];
+    [layerProperties removeObjectForKey:@"cellProperties"];
+    [self.emitterLayer setValuesForKeysWithDictionary:layerProperties];
+    
+    self.emitterPosXField.stringValue = [NSString stringWithFormat:@"%.2f", self.emitterLayer.emitterPosition.x];
+    self.emitterPosYField.stringValue = [NSString stringWithFormat:@"%.2f", self.emitterLayer.emitterPosition.y];
+    
+    self.emitterSizeWidthField.stringValue = [NSString stringWithFormat:@"%.2f", self.emitterLayer.emitterSize.width];
+    self.emitterSizeHeightField.stringValue = [NSString stringWithFormat:@"%.2f", self.emitterLayer.emitterSize.height];
+    
+    [self.renderModeSelector selectItemAtIndex:[MasterViewController indexForRenderMode:self.emitterLayer.renderMode]];
+    [self.emitterShapeSelector selectItemAtIndex:[MasterViewController indexForEmitterShape:self.emitterLayer.emitterShape]];
+    
     CAEmitterCell *cell = [CAEmitterCell emitterCell];
-    [cell setValuesForKeysWithDictionary:emitterCellAsDictionary];
+    [cell setValuesForKeysWithDictionary:emitterProperties];
     
     self.emitterLayer.birthRate = 0.0f;
-    self.emitterLayer.emitterCells = @[cell];
     
-    for (NSString *propertyName in [emitterCellAsDictionary allKeys])
+    for (NSString *propertyName in [emitterProperties allKeys])
     {
         for (NSControl *control in self.allControls)
         {
             if ([control.emitterPropertyToModify isEqualToString:propertyName])
             {
-                control.floatValue = [emitterCellAsDictionary[propertyName] floatValue];
+                float controlAmount = [emitterCellAsDictionary[propertyName] floatValue];
+                control.floatValue = controlAmount;
+                [control drawCellInside:control.cell];
                 NSInteger index = [self.allControls indexOfObject:control];
                 NSDictionary *elementDetails = self.allUIElements[index];
                 NSTextField *textField = control.label;
@@ -234,40 +289,32 @@
             }
         }
     }
+    
+    self.emitterCell = cell;
+    self.emitterLayer.emitterCells = @[];
+    self.emitterLayer.emitterCells = @[cell];
 }
 
 - (NSData *)serializedEmitter
 {
-    NSMutableArray *propertyNames = [[NSMutableArray alloc] init];
-    unsigned int propertyCount = 0;
-    objc_property_t *properties = class_copyPropertyList([self.emitterCell class], &propertyCount);
-    
-    for (unsigned int i = 0; i < propertyCount; ++i) {
-        objc_property_t property = properties[i];
-        const char * name = property_getName(property);
-        
-        [propertyNames addObject:[NSString stringWithUTF8String:name]];
-    }
-    
-    free(properties);
-    
-    NSMutableDictionary *propertiesToSave = [NSMutableDictionary dictionaryWithCapacity:propertyCount];
-    for (NSString *propertyName in propertyNames)
+    NSMutableDictionary *propertiesToSave = [NSMutableDictionary dictionaryWithCapacity:self.allControls.count];
+    for (NSControl *propertyControl in self.allControls)
     {
-        for (NSControl *propertyControl in self.allControls)
-        {
-            if([propertyControl.emitterPropertyToModify isEqualToString:propertyName])
-            {
-                propertiesToSave[propertyName] = [self.emitterCell valueForKey:propertyName];
-            }
-        }
+        propertiesToSave[propertyControl.emitterPropertyToModify] = [self.emitterCell valueForKey:propertyControl.emitterPropertyToModify];
     }
     
     propertiesToSave[@"imageName"] = self.emitterCell.imageName;
     
+    NSMutableDictionary *layerProperties = [NSMutableDictionary dictionary];
+    layerProperties[@"renderMode"] = self.emitterLayer.renderMode;
+    layerProperties[@"emitterShape"] = self.emitterLayer.emitterShape;
+    layerProperties[@"emitterPosition"] = [NSValue valueWithPoint:self.emitterLayer.emitterPosition];
+    layerProperties[@"emitterSize"] = [NSValue valueWithSize:self.emitterLayer.emitterSize];
+    layerProperties[@"cellProperties"] = propertiesToSave;
+    
     NSMutableData *serializedProperties = [[NSMutableData alloc] init];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:serializedProperties];
-    [archiver encodeObject:propertiesToSave forKey:@"Some Key Value"];
+    [archiver encodeObject:layerProperties forKey:@"Some Key Value"];
     [archiver finishEncoding];
     
     return serializedProperties;
@@ -305,7 +352,8 @@
 
 + (NSString * const)renderModeForIndex:(NSUInteger)index
 {
-    switch (index) {
+    switch (index)
+    {
         case 0:
             return kCAEmitterLayerUnordered;
         case 1:
@@ -333,6 +381,43 @@
         return 3;
     else
         return 4;
+}
+
++ (NSString * const)emitterShapeForIndex:(NSUInteger)index
+{
+    switch (index)
+    {
+        case 0:
+            return kCAEmitterLayerPoint;
+        case 1:
+            return kCAEmitterLayerLine;
+        case 2:
+            return kCAEmitterLayerRectangle;
+        case 3:
+            return kCAEmitterLayerCuboid;
+        case 4:
+            return kCAEmitterLayerCircle;
+        case 5:
+            return kCAEmitterLayerSphere;
+        default:
+            return kCAEmitterLayerPoint;
+    }
+}
+
++ (NSUInteger)indexForEmitterShape:(NSString * const)shape
+{
+    if ([shape isEqualToString:kCAEmitterLayerPoint])
+        return 0;
+    else if ([shape isEqualToString:kCAEmitterLayerLine])
+        return 1;
+    else if ([shape isEqualToString:kCAEmitterLayerRectangle])
+        return 2;
+    else if ([shape isEqualToString:kCAEmitterLayerCuboid])
+        return 3;
+    else if ([shape isEqualToString:kCAEmitterLayerCircle])
+        return 4;
+    else if ([shape isEqualToString:kCAEmitterLayerSphere])
+        return 5;
 }
 
 - (NSTextField *)labelForIndex:(int)index

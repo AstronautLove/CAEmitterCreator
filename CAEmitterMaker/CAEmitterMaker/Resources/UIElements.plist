@@ -122,5 +122,89 @@
 		<key>labelString</key>
 		<string>spin variance</string>
 	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255</string>
+		<key>emitterProperty</key>
+		<string>redRange</string>
+		<key>labelString</key>
+		<string>red variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255.0</string>
+		<key>emitterProperty</key>
+		<string>redSpeed</string>
+		<key>labelString</key>
+		<string>red speed</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255.0</string>
+		<key>emitterProperty</key>
+		<string>greenRange</string>
+		<key>labelString</key>
+		<string>green variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255.0</string>
+		<key>emitterProperty</key>
+		<string>greenSpeed</string>
+		<key>labelString</key>
+		<string>green speed</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255.0</string>
+		<key>emitterProperty</key>
+		<string>blueRange</string>
+		<key>labelString</key>
+		<string>blue variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255.0</string>
+		<key>emitterProperty</key>
+		<string>blueSpeed</string>
+		<key>labelString</key>
+		<string>blue speed</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>0</string>
+		<key>max</key>
+		<string>255.0</string>
+		<key>emitterProperty</key>
+		<string>alphaRange</string>
+		<key>labelString</key>
+		<string>alpha range</string>
+	</dict>
 </array>
 </plist>
