@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  MasterViewController.h
 //  CAEmitterMaker
 //
 //  Created by Nick Brice on 1/8/13.
@@ -8,8 +8,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
-
-@property (assign) IBOutlet NSWindow *window;
+@interface MasterViewController : NSViewController
 
 @end

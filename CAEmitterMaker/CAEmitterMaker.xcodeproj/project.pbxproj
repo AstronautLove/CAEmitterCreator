@@ -13,6 +13,12 @@
 		019F8F72169D39F0000FFD95 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F70169D39F0000FFD95 /* Credits.rtf */; };
 		019F8F75169D39F0000FFD95 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 019F8F74169D39F0000FFD95 /* AppDelegate.m */; };
 		019F8F78169D39F1000FFD95 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F76169D39F1000FFD95 /* MainMenu.xib */; };
+		019F8F91169D458B000FFD95 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 019F8F8F169D458B000FFD95 /* MasterViewController.m */; };
+		019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 019F8F90169D458B000FFD95 /* MasterViewController.xib */; };
+		019F8F95169D47C2000FFD95 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 019F8F93169D47AA000FFD95 /* QuartzCore.framework */; };
+		01A6060F16A7B7E3000AE4E8 /* UIElements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01A6060E16A7B7E3000AE4E8 /* UIElements.plist */; };
+		01A6061216A7B9DB000AE4E8 /* NSControl+EmitterProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 01A6061116A7B9DB000AE4E8 /* NSControl+EmitterProperty.m */; };
+		01E99A5916B282D5000DAC21 /* CAEmitterCell+ImageName.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E99A5816B282D5000DAC21 /* CAEmitterCell+ImageName.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +35,15 @@
 		019F8F73169D39F0000FFD95 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		019F8F74169D39F0000FFD95 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		019F8F77169D39F1000FFD95 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		019F8F8E169D458B000FFD95 /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MasterViewController.h; path = Classes/MasterViewController.h; sourceTree = "<group>"; };
+		019F8F8F169D458B000FFD95 /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MasterViewController.m; path = Classes/MasterViewController.m; sourceTree = "<group>"; };
+		019F8F90169D458B000FFD95 /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MasterViewController.xib; path = Classes/MasterViewController.xib; sourceTree = "<group>"; };
+		019F8F93169D47AA000FFD95 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		01A6060E16A7B7E3000AE4E8 /* UIElements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = UIElements.plist; path = Resources/UIElements.plist; sourceTree = "<group>"; };
+		01A6061016A7B9DB000AE4E8 /* NSControl+EmitterProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSControl+EmitterProperty.h"; path = "Classes/NSControl+EmitterProperty.h"; sourceTree = "<group>"; };
+		01A6061116A7B9DB000AE4E8 /* NSControl+EmitterProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSControl+EmitterProperty.m"; path = "Classes/NSControl+EmitterProperty.m"; sourceTree = "<group>"; };
+		01E99A5716B282D5000DAC21 /* CAEmitterCell+ImageName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CAEmitterCell+ImageName.h"; path = "Classes/CAEmitterCell+ImageName.h"; sourceTree = "<group>"; };
+		01E99A5816B282D5000DAC21 /* CAEmitterCell+ImageName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "CAEmitterCell+ImageName.m"; path = "Classes/CAEmitterCell+ImageName.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				019F8F95169D47C2000FFD95 /* QuartzCore.framework in Frameworks */,
 				019F8F62169D39F0000FFD95 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,6 +79,7 @@
 		019F8F60169D39F0000FFD95 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				019F8F93169D47AA000FFD95 /* QuartzCore.framework */,
 				019F8F61169D39F0000FFD95 /* Cocoa.framework */,
 				019F8F63169D39F0000FFD95 /* Other Frameworks */,
 			);
@@ -82,6 +99,8 @@
 		019F8F67169D39F0000FFD95 /* CAEmitterMaker */ = {
 			isa = PBXGroup;
 			children = (
+				01A6060116A53011000AE4E8 /* Resources */,
+				019F8F8C169D4574000FFD95 /* Classes */,
 				019F8F73169D39F0000FFD95 /* AppDelegate.h */,
 				019F8F74169D39F0000FFD95 /* AppDelegate.m */,
 				019F8F76169D39F1000FFD95 /* MainMenu.xib */,
@@ -100,6 +119,28 @@
 				019F8F70169D39F0000FFD95 /* Credits.rtf */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		019F8F8C169D4574000FFD95 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				019F8F8E169D458B000FFD95 /* MasterViewController.h */,
+				019F8F8F169D458B000FFD95 /* MasterViewController.m */,
+				019F8F90169D458B000FFD95 /* MasterViewController.xib */,
+				01A6061016A7B9DB000AE4E8 /* NSControl+EmitterProperty.h */,
+				01A6061116A7B9DB000AE4E8 /* NSControl+EmitterProperty.m */,
+				01E99A5716B282D5000DAC21 /* CAEmitterCell+ImageName.h */,
+				01E99A5816B282D5000DAC21 /* CAEmitterCell+ImageName.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		01A6060116A53011000AE4E8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				01A6060E16A7B7E3000AE4E8 /* UIElements.plist */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -156,6 +197,8 @@
 				019F8F6C169D39F0000FFD95 /* InfoPlist.strings in Resources */,
 				019F8F72169D39F0000FFD95 /* Credits.rtf in Resources */,
 				019F8F78169D39F1000FFD95 /* MainMenu.xib in Resources */,
+				019F8F92169D458B000FFD95 /* MasterViewController.xib in Resources */,
+				01A6060F16A7B7E3000AE4E8 /* UIElements.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +211,9 @@
 			files = (
 				019F8F6E169D39F0000FFD95 /* main.m in Sources */,
 				019F8F75169D39F0000FFD95 /* AppDelegate.m in Sources */,
+				019F8F91169D458B000FFD95 /* MasterViewController.m in Sources */,
+				01A6061216A7B9DB000AE4E8 /* NSControl+EmitterProperty.m in Sources */,
+				01E99A5916B282D5000DAC21 /* CAEmitterCell+ImageName.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,6 +343,7 @@
 				019F8F7D169D39F1000FFD95 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
