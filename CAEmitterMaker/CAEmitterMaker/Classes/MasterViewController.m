@@ -418,6 +418,8 @@
         return 4;
     else if ([shape isEqualToString:kCAEmitterLayerSphere])
         return 5;
+    else
+        return 0;
 }
 
 - (NSTextField *)labelForIndex:(int)index
