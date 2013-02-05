@@ -12,6 +12,7 @@
 #import "NSControl+EmitterProperty.h"
 #import "CAEmitterCell+ImageName.h"
 
+#define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
 #define UI_ELEMENT_START_Y  400
 #define SLIDER_SIZE         NSMakeSize(212,21)
 #define TEXTFIELD_SIZE      NSMakeSize(212,21)
@@ -130,7 +131,15 @@
     [self.emitterCell setValue:@(slider.floatValue) forKey:slider.emitterPropertyToModify];
     self.emitterLayer.emitterCells = @[self.emitterCell];
     NSString *labelText = (self.allUIElements[slider.tag])[@"labelString"];
-    slider.label.stringValue = [NSString stringWithFormat:@"%@: %.3f", labelText, slider.floatValue];
+    float sliderValue = slider.floatValue;
+    if ([slider.emitterPropertyToModify isEqualToString:@"emissionLongitude"] ||
+        [slider.emitterPropertyToModify isEqualToString:@"emissionRange"] ||
+        [slider.emitterPropertyToModify isEqualToString:@"spin"] ||
+        [slider.emitterPropertyToModify isEqualToString:@"spinRange"])
+    {
+        sliderValue = RADIANS_TO_DEGREES(sliderValue);
+    }
+    slider.label.stringValue = [NSString stringWithFormat:@"%@: %.3f", labelText, sliderValue];
 }
 
 - (void)setEmitterCellImage:(NSURL *)imageURL
@@ -285,6 +294,13 @@
                 NSDictionary *elementDetails = self.allUIElements[index];
                 NSTextField *textField = control.label;
                 float propVal = [[cell valueForKey:propertyName] floatValue];
+                if ([control.emitterPropertyToModify isEqualToString:@"emissionLongitude"] ||
+                    [control.emitterPropertyToModify isEqualToString:@"emissionRange"] ||
+                    [control.emitterPropertyToModify isEqualToString:@"spin"] ||
+                    [control.emitterPropertyToModify isEqualToString:@"spinRange"])
+                {
+                    propVal = RADIANS_TO_DEGREES(propVal);
+                }
                 textField.stringValue = [NSString stringWithFormat:@"%@: %.3f", elementDetails[@"labelString"], propVal];
             }
         }
