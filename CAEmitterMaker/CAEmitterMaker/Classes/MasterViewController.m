@@ -287,7 +287,7 @@
         {
             if ([control.emitterPropertyToModify isEqualToString:propertyName])
             {
-                float controlAmount = [emitterCellAsDictionary[propertyName] floatValue];
+                float controlAmount = [emitterProperties[propertyName] floatValue];
                 control.floatValue = controlAmount;
                 [control drawCellInside:control.cell];
                 NSInteger index = [self.allControls indexOfObject:control];
