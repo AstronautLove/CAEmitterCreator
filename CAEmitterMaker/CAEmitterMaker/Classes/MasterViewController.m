@@ -256,6 +256,11 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
         NSData *data = [[NSMutableData alloc] initWithContentsOfFile:fileURL.path];
         NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
         NSDictionary *deserializedEmitterCell = [unarchiver decodeObjectForKey:ARCHIVE_KEY];
+        if (!deserializedEmitterCell)
+        {
+            // Originally used this as the key, so to support backwards compatibility...
+            deserializedEmitterCell = [unarchiver decodeObjectForKey:@"Some Key Value"];
+        }
         [unarchiver finishDecoding];
         
         [self loadEmitterCellFromDictionary:deserializedEmitterCell];
