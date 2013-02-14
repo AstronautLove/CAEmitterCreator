@@ -21,6 +21,8 @@
 #define ELEMENT_HEIGHT      21
 #define BUFFER_Y            15
 
+NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
+
 @interface MasterViewController ()
 
 @property (nonatomic, strong) IBOutlet NSView *emitterView;
@@ -253,7 +255,7 @@
         NSURL *fileURL = [openDialog URLs][0];
         NSData *data = [[NSMutableData alloc] initWithContentsOfFile:fileURL.path];
         NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-        NSDictionary *deserializedEmitterCell = [unarchiver decodeObjectForKey:@"Some Key Value"];
+        NSDictionary *deserializedEmitterCell = [unarchiver decodeObjectForKey:ARCHIVE_KEY];
         [unarchiver finishDecoding];
         
         [self loadEmitterCellFromDictionary:deserializedEmitterCell];
@@ -330,7 +332,7 @@
     
     NSMutableData *serializedProperties = [[NSMutableData alloc] init];
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:serializedProperties];
-    [archiver encodeObject:layerProperties forKey:@"Some Key Value"];
+    [archiver encodeObject:layerProperties forKey:ARCHIVE_KEY];
     [archiver finishEncoding];
     
     return serializedProperties;
