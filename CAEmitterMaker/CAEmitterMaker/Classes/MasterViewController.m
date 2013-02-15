@@ -239,10 +239,15 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
     if ([saveDialog runModal] == NSOKButton)
     {
         NSURL *fileURL = saveDialog.URL;
-        
+        NSString *pathExtension = fileURL.pathExtension;
+        NSString *filePath = fileURL.path;
+        if (!pathExtension || [pathExtension isEqualToString:@""])
+        {
+            filePath = [filePath stringByAppendingString:@".pfp"];
+        }
         NSData *serializedEmitter = [self serializedEmitter];
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        [fileManager createFileAtPath:fileURL.path contents:serializedEmitter attributes:nil];
+        [fileManager createFileAtPath:filePath contents:serializedEmitter attributes:nil];
     }
 }
 
@@ -331,7 +336,6 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
     NSMutableDictionary *layerProperties = [NSMutableDictionary dictionary];
     layerProperties[@"renderMode"] = self.emitterLayer.renderMode;
     layerProperties[@"emitterShape"] = self.emitterLayer.emitterShape;
-    layerProperties[@"emitterPosition"] = [NSValue valueWithPoint:self.emitterLayer.emitterPosition];
     layerProperties[@"emitterSize"] = [NSValue valueWithSize:self.emitterLayer.emitterSize];
     layerProperties[@"cellProperties"] = propertiesToSave;
     
