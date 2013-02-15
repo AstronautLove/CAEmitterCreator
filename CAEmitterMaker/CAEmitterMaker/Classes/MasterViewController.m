@@ -76,6 +76,7 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
                                                     self.emitterView.bounds.size.height / 2);
     NSLog(@"%@", NSStringFromPoint(self.emitterLayer.emitterPosition));
     self.emitterLayer.emitterSize = CGSizeMake(32, 32);
+    //self.emitterLayer.transform = CATransform3DScale(self.emitterLayer.transform, 1.0, -1.0, 1.0);
     
     [rootLayer addSublayer:self.emitterLayer];
     [self.emitterView setLayer:rootLayer];
@@ -275,7 +276,7 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
 - (void)loadEmitterCellFromDictionary:(NSDictionary *)emitterCellAsDictionary
 {
     NSMutableDictionary *layerProperties = [emitterCellAsDictionary mutableCopy];
-    NSDictionary *emitterProperties = layerProperties[@"cellProperties"];
+    NSMutableDictionary *emitterProperties = [NSMutableDictionary dictionaryWithDictionary:layerProperties[@"cellProperties"]];
     [layerProperties removeObjectForKey:@"cellProperties"];
     [self.emitterLayer setValuesForKeysWithDictionary:layerProperties];
     
@@ -288,6 +289,13 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
     [self.renderModeSelector selectItemAtIndex:[MasterViewController indexForRenderMode:self.emitterLayer.renderMode]];
     [self.emitterShapeSelector selectItemAtIndex:[MasterViewController indexForEmitterShape:self.emitterLayer.emitterShape]];
     
+    // We need to flip the velocity since we saved it out flipped so it's easy to load on iOS
+    NSInteger velocity = [emitterProperties[@"velocity"] integerValue];
+    if (velocity < 0)
+    {
+        emitterProperties[@"velocity"] = @(-velocity);
+    }
+
     CAEmitterCell *cell = [CAEmitterCell emitterCell];
     [cell setValuesForKeysWithDictionary:emitterProperties];
     
@@ -330,6 +338,10 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
     {
         propertiesToSave[propertyControl.emitterPropertyToModify] = [self.emitterCell valueForKey:propertyControl.emitterPropertyToModify];
     }
+    
+    // Flip the velocity so it displays correctly
+    NSInteger velocity = [propertiesToSave[@"velocity"] integerValue];
+    propertiesToSave[@"velocity"] = @(-velocity);
     
     propertiesToSave[@"imageName"] = self.emitterCell.imageName;
     
