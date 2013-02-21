@@ -291,10 +291,12 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
     
     // We need to flip the velocity since we saved it out flipped so it's easy to load on iOS
     NSInteger velocity = [emitterProperties[@"velocity"] integerValue];
+    NSInteger yAccel = [emitterProperties[@"yAcceleration"] integerValue];
     if (velocity < 0)
     {
         emitterProperties[@"velocity"] = @(-velocity);
     }
+    emitterProperties[@"yAcceleration"] = @(-yAccel);
 
     CAEmitterCell *cell = [CAEmitterCell emitterCell];
     [cell setValuesForKeysWithDictionary:emitterProperties];
@@ -339,9 +341,11 @@ NSString * const ARCHIVE_KEY = @"CAEmitterMakerParticle";
         propertiesToSave[propertyControl.emitterPropertyToModify] = [self.emitterCell valueForKey:propertyControl.emitterPropertyToModify];
     }
     
-    // Flip the velocity so it displays correctly
+    // Flip the velocity and y acceleration so it displays correctly on device
     NSInteger velocity = [propertiesToSave[@"velocity"] integerValue];
+    NSInteger yAccel = [propertiesToSave[@"yAcceleration"] integerValue];
     propertiesToSave[@"velocity"] = @(-velocity);
+    propertiesToSave[@"yAcceleration"] = @(-yAccel);
     
     propertiesToSave[@"imageName"] = self.emitterCell.imageName;
     

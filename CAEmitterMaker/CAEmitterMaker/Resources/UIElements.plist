@@ -102,6 +102,42 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
+		<string>-500</string>
+		<key>max</key>
+		<string>500</string>
+		<key>emitterProperty</key>
+		<string>xAcceleration</string>
+		<key>labelString</key>
+		<string>x acceleration</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>-500</string>
+		<key>max</key>
+		<string>500</string>
+		<key>emitterProperty</key>
+		<string>yAcceleration</string>
+		<key>labelString</key>
+		<string>y acceleration</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>-500</string>
+		<key>max</key>
+		<string>500</string>
+		<key>emitterProperty</key>
+		<string>zAcceleration</string>
+		<key>labelString</key>
+		<string>z acceleration</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
 		<string>0</string>
 		<key>max</key>
 		<string>6.28318530718</string>
@@ -162,7 +198,7 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
-		<string>0</string>
+		<string>-10.0</string>
 		<key>max</key>
 		<string>10</string>
 		<key>emitterProperty</key>
@@ -186,7 +222,7 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
-		<string>0</string>
+		<string>-10.0</string>
 		<key>max</key>
 		<string>10</string>
 		<key>emitterProperty</key>
@@ -210,7 +246,7 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
-		<string>0</string>
+		<string>-10.0</string>
 		<key>max</key>
 		<string>10</string>
 		<key>emitterProperty</key>
@@ -224,11 +260,23 @@
 		<key>min</key>
 		<string>0</string>
 		<key>max</key>
-		<string>255.0</string>
+		<string>1.0</string>
 		<key>emitterProperty</key>
 		<string>alphaRange</string>
 		<key>labelString</key>
-		<string>alpha range</string>
+		<string>alpha variance</string>
+	</dict>
+	<dict>
+		<key>type</key>
+		<string>slider</string>
+		<key>min</key>
+		<string>-10.0</string>
+		<key>max</key>
+		<string>10.0</string>
+		<key>emitterProperty</key>
+		<string>alphaSpeed</string>
+		<key>labelString</key>
+		<string>alpha speed</string>
 	</dict>
 </array>
 </plist>
