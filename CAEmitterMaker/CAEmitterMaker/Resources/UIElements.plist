@@ -102,9 +102,9 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
-		<string>-500</string>
+		<string>-1000</string>
 		<key>max</key>
-		<string>500</string>
+		<string>1000</string>
 		<key>emitterProperty</key>
 		<string>xAcceleration</string>
 		<key>labelString</key>
@@ -114,9 +114,9 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
-		<string>-500</string>
+		<string>-1000</string>
 		<key>max</key>
-		<string>500</string>
+		<string>1000</string>
 		<key>emitterProperty</key>
 		<string>yAcceleration</string>
 		<key>labelString</key>
@@ -126,9 +126,9 @@
 		<key>type</key>
 		<string>slider</string>
 		<key>min</key>
-		<string>-500</string>
+		<string>-1000</string>
 		<key>max</key>
-		<string>500</string>
+		<string>1000</string>
 		<key>emitterProperty</key>
 		<string>zAcceleration</string>
 		<key>labelString</key>
